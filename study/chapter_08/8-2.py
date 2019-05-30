@@ -1,7 +1,9 @@
+import math
+
 class Cake:
     coat = '생크림'
 
-    def describe(self):
+    def describe(self): #self는 인스턴스 로 호출할때 발생됨. static처럼 사용하면 에러남
         print('이 케익은', self.coat, '(으)로 덮여 있다.')
 
 # 클래스 확인
@@ -20,6 +22,13 @@ cake2 = Cake()
 class Coordinate:
     x = 0
     y = 0
+    #
+    def distance(self, coordinate):
+        return math.sqrt(
+            ((self.x - self.y)*(self.x - self.y)) +
+            ((coordinate.x - coordinate.y)*(coordinate.x - coordinate.y))
+        )
+
 
 # print(Coordinate)
 # 멤버확인
@@ -50,7 +59,7 @@ coordinate2.y = 3
 # print(Coordinate.x)
 
 # 연습문제 8-7 좌표 인스턴스의 거리 계산하기
-# import math
+
 # def square(x):
 #     return x * x
 
@@ -64,8 +73,10 @@ coordinate2.y = 3
 
 # 클래스 메서드 정의
 # print(Cake.describe())
+# print(cake1.describe())
 
-print(cake1.describe())
+# 연습문제 8-8 좌표 인스턴스의 거리를 메서드로 계산하기
+print(coordinate1.distance(coordinate2))
 
 
-
+# 8.3.4 인스턴스 초기화하기 - 부터 볼것!!!
