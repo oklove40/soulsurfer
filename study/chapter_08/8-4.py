@@ -31,7 +31,7 @@ class IceCreamCake(Cake):
     def __init__(self, flavor, price, topping, candles=0):
         self.flavor = flavor
         # print(self.flavor, ' 맛입니다.')
-        return super().__init__(candles, price, topping)
+        super().__init__(candles, price, topping)
 
 # ice_cream_cake_1 = IceCreamCake('바닐라맛', 12000, '딸기')
 # print(ice_cream_cake_1.describe())
@@ -42,7 +42,7 @@ class FruitIceCreamCake(IceCreamCake):
     def __init__(self, fruit_percent, flavor, price, topping, candles=0):
         self.fruit_percent = fruit_percent
         # print('과일 함유량은 ', self.fruit_percent, ' 입니다.')
-        return super().__init__(flavor, price, topping, candles=candles)
+        super().__init__(flavor, price, topping, candles=candles)
 
 # fruit_ice_cream_cake1 = FruitIceCreamCake(95, '오레오', 25000, '쿠키')
 # print(fruit_ice_cream_cake1.describe())
@@ -69,11 +69,11 @@ class Shape():
 
 class Triangle(Shape):
     def __init__(self, sides=3):
-        return super().__init__(sides)
+        super().__init__(sides)
 
 class Ractangle(Shape):
     def __init__(self, sides=4):
-        return super().__init__(sides)
+        super().__init__(sides)
 
 triangle1 = Triangle()
 print(triangle1.describe())
