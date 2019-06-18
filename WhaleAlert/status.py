@@ -201,3 +201,33 @@
     ]
 }
 """
+
+# requests 모듈 설치
+# https://shaeod.tistory.com/929
+
+import json
+import requests
+
+api_key='c8NzK9pvEGCc1XW8hIcwLrrB1Kxi8649'
+url = 'https://api.whale-alert.io/v1/status?api_key=' + api_key
+
+res = requests.get(url)
+# print(res.text)
+
+toObj = json.loads(res.text)
+# print(toObj)
+
+result = toObj['result']
+blockchain_count = int(toObj['blockchain_count'])
+
+# print('result : ', toObj['result'])
+# print('blockchains : ', toObj['blockchains'])
+
+print('result : ', result)
+print('blockchain_count : ', blockchain_count)
+
+
+blockchains = toObj['blockchains']
+
+for i in range(0,blockchain_count):
+    print('coin Code : ', blockchains[i]['name'], '(', blockchains[i]['status'],')')

@@ -1,6 +1,5 @@
 # https://api.whale-alert.io/v1/transactions?api_key=c8NzK9pvEGCc1XW8hIcwLrrB1Kxi8649&min_value=500000&start=1560836902&cursor=2bc7e46-2bc7e46-5c66c0a7
 
-
 """
 {
     "result": "success",
@@ -473,4 +472,116 @@
         }
     ]
 }
+"""
+
+import time
+import json
+import requests
+
+class Transaction():
+    def __init__(self, _blockchain, _symbol, _id, _transaction_type, _hash, _from, _to, _timestamp, _amount, _amount_usd, _transaction_count):
+        self.blockchain = _blockchain
+        print('')
+
+def one_hour_later_timestamp(secound):
+    return round(time.time()) - secound
+
+def apiCall():
+    res = requests.get(url)
+    return json.loads(res.text)
+
+api_key='c8NzK9pvEGCc1XW8hIcwLrrB1Kxi8649'
+min_value = '500000'
+start = str(one_hour_later_timestamp(3500))
+
+url = 'https://api.whale-alert.io/v1/transactions?api_key='+api_key+'&min_value='+min_value+'&start='+start+'&cursor=2bc7e46-2bc7e46-5c66c0a7'
+
+# print(url)
+
+rtnObj = apiCall()
+print('result:', rtnObj['result'])
+print('cursor:', rtnObj['cursor'])
+print('count:', rtnObj['count'])
+
+count = int(rtnObj['count'])
+if count > 0:
+    transactions = rtnObj['transactions']
+
+    for j in range(0, count):
+        print('blockchain:', transactions[j]['blockchain'])
+        print('symbol:', transactions[j]['symbol'])
+        print('id:', transactions[j]['id'])
+        print('transaction_type:', transactions[j]['transaction_type'])
+        print('hash:', transactions[j]['hash'])
+        print('from:', transactions[j]['from'])
+        print('from:', transactions[j]['from']['address'])
+        # print('from:', transactions[j]['from']['owner'])
+        print('from:', transactions[j]['from']['owner_type'])
+        print('to:', transactions[j]['to'])
+        print('to:', transactions[j]['to']['address'])
+        # print('to:', transactions[j]['to']['owner'])
+        print('to:', transactions[j]['to']['owner_type'])
+        print('timestamp:', transactions[j]['timestamp'])
+        print('amount:', transactions[j]['amount'])
+        print('amount_usd:', transactions[j]['amount_usd'])
+        print('transaction_count:', transactions[j]['transaction_count'])
+else:
+    print('없음.')
+
+# "result": "success",
+# "cursor": "b9f81e6-b9f81e6-5d087cbf",
+# "count": 24,
+# transactions
+
+# for i in range(0, 10):
+#     rtnObj = apiCall()
+#     print('result:', rtnObj['result'])
+#     print('cursor:', rtnObj['cursor'])
+#     print('count:', rtnObj['count'])
+
+#     count = int(rtnObj['count'])
+#     if count > 0:
+#         transactions = rtnObj['transactions']
+
+#         for j in range(0, count):
+#             print('blockchain:', transactions[j]['blockchain'])
+#             print('symbol:', transactions[j]['symbol'])
+#             print('id:', transactions[j]['id'])
+#             print('transaction_type:', transactions[j]['transaction_type'])
+#             print('hash:', transactions[j]['hash'])
+#             print('from:', transactions[j]['from'])
+#             print('from:', transactions[j]['from'][0]['address'])
+#             print('from:', transactions[j]['from'][0]['owner_type'])
+#             print('to:', transactions[j]['to'])
+#             print('to:', transactions[j]['to'][0]['address'])
+#             print('to:', transactions[j]['to'][0]['owner_type'])
+#             print('timestamp:', transactions[j]['timestamp'])
+#             print('amount:', transactions[j]['amount'])
+#             print('amount_usd:', transactions[j]['amount_usd'])
+#             print('transaction_count:', transactions[j]['transaction_count'])
+#     else:
+#         print('없음.')
+
+#     # 1초간 휴식
+#     time.sleep(1)
+
+"""
+"blockchain": "ethereum",
+"symbol": "eth",
+"id": "195002854",
+"transaction_type": "transfer",
+"hash": "b00f4343a3cd5745d8d806d067c910b07cb007ddf435578546929932bd4af95e",
+"from": {
+    "address": "d8a83b72377476d0a66683cde20a8aad0b628713",
+    "owner_type": "unknown"
+},
+"to": {
+    "address": "eec606a66edb6f497662ea31b5eb1610da87ab5f",
+    "owner": "huobi",
+    "owner_type": "exchange"
+},
+"timestamp": 1560837311,
+"amount": 3998,
+"amount_usd": 1071398.1,
+"transaction_count": 1
 """
