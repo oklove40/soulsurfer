@@ -1,8 +1,6 @@
 import telegram
-from telegram.ext import Updater, CommandHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
-# 텔레그램 알림
-print('텔레그램 알림')
 # print(trades)
 
 # 설치방법
@@ -27,6 +25,11 @@ class TelegramBot:
     def sendMessage(self, text):
         self.core.sendMessage(chat_id = self.id, text=text)
     
+    def receivedMessage(self, update) :
+        self.core.sendMessage(chat_id = self.id, text=update.message.text)
+        # self.core.message.reply_text("got text")
+        # self.core.message.reply_text(update.message.text)
+        
     def stop(self):
         self.updater.start_polling()
         self.updater.dispatcher.stop()
@@ -39,10 +42,13 @@ class BotWhale(TelegramBot):
         TelegramBot.__init__(self, '고래', self.token)
         self.updater.stop()
 
-    def start(self):
-        self.sendMessage('고래가 잠에서 깨어납니다.')
-        self.updater.start_polling(timeout=3, clean=True)
-        self.updater.idle()
-
     def add_handler(self, cmd, func):
         self.updater.dispatcher.add_handler(CommandHandler(cmd, func))
+
+    def add_msg_handler(self, func):
+        self.updater.dispatcher.add_handler(MessageHandler(Filters.text, func))
+
+    def start(self):
+        self.sendMessage('숨쉬는 고래를 찾고 있습니다.')
+        self.updater.start_polling()
+        self.updater.idle()
