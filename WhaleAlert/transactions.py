@@ -495,13 +495,7 @@ start = str(one_hour_later_timestamp(3500))
 
 url = 'https://api.whale-alert.io/v1/transactions?api_key='+api_key+'&min_value='+min_value+'&start='+start+'&cursor=2bc7e46-2bc7e46-5c66c0a7'
 
-# test = "{'blockchain': 'bitcoin', 'symbol': 'btc', 'id': '195535484', 'transaction_type': 'transfer', 'hash': '28a9744ebcff6e7db916272bd1a9e12f6cb90e105de6da883b7d5101880b6662', 'from': {'address': '1LmjfhrnJcq9Te3h7x7cDQcXPneqS1jTJc', 'owner_type': 'unknown'}, 'to': {'address': '1NrERKT8iV1GaCwEJtr1GjWfaoCpirWdnk', 'owner_type':'unknown'}, 'timestamp': 1560865082, 'amount': 299.8161, 'amount_usd': 2759802.5, 'transaction_count': 1}"
-# low_data = test.replace("'","\"")
-# t = Trans(low_data)
-
-
-# print(url)
-
+# 거래 내역 모음
 trades = []
 
 rtnObj = apiCall()
