@@ -10,12 +10,12 @@ print('start telegram chat bot')
 
 # message reply function
 def receivedMessage(bot, update) :
-    update.message.reply_text("got text")
+    # update.message.reply_text("got text")
     update.message.reply_text(update.message.text)
 
 # help reply function
 def helpCommand(bot, update) :
-    update.message.reply_text("can i Help U?")
+    update.message.reply_text("뭘 도와줄까?")
 
 # photo reply function
 def get_photo(bot, update) :
@@ -48,4 +48,5 @@ updater.dispatcher.add_handler(file_handler)
 
 updater.start_polling(timeout=3, clean=True)
 updater.idle()
+
 
