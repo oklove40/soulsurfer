@@ -1,7 +1,7 @@
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 import os
 
-my_token = '826228868:AAF-MKYqX-PZfn27URQZRnAM7a6fa0ljHuw'
+my_token = ''
 
 # real path to dirname
 dir_now = os.path.dirname(os.path.abspath(__file__))

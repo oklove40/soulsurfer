@@ -1,4 +1,4 @@
-# https://api.whale-alert.io/v1/transactions?api_key=c8NzK9pvEGCc1XW8hIcwLrrB1Kxi8649&min_value=500000&start=1560836902&cursor=2bc7e46-2bc7e46-5c66c0a7
+# https://api.whale-alert.io/v1/transactions?api_key=&min_value=500000&start=1560836902&cursor=2bc7e46-2bc7e46-5c66c0a7
 
 """
 {
@@ -489,7 +489,7 @@ def apiCall():
     res = requests.get(url)
     return json.loads(res.text)
 
-api_key='c8NzK9pvEGCc1XW8hIcwLrrB1Kxi8649'
+api_key=''
 min_value = '500000'
 start = str(one_hour_later_timestamp(3500))
 

@@ -7,9 +7,9 @@ import requests
 
 class MessageModule:
     def __init__(self):
-        self.token = '826228868:AAF-MKYqX-PZfn27URQZRnAM7a6fa0ljHuw'
+        self.token = ''
         self.trades = []
-        self.api_key='c8NzK9pvEGCc1XW8hIcwLrrB1Kxi8649'
+        self.api_key=''
         self.min_value = '10000000'
         self.collection = []
         self.initialDB()

@@ -1,4 +1,4 @@
-# https://api.whale-alert.io/v1/status?api_key=c8NzK9pvEGCc1XW8hIcwLrrB1Kxi8649
+# https://api.whale-alert.io/v1/status?api_key=
 """
 {
     "result": "success",
@@ -208,7 +208,7 @@
 import json
 import requests
 
-api_key='c8NzK9pvEGCc1XW8hIcwLrrB1Kxi8649'
+api_key=''
 url = 'https://api.whale-alert.io/v1/status?api_key=' + api_key
 
 res = requests.get(url)

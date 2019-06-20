@@ -28,7 +28,7 @@ class TelegramModule:
 
 class WhaleBreath(TelegramModule):
     def __init__(self):
-        self.token = '826228868:AAF-MKYqX-PZfn27URQZRnAM7a6fa0ljHuw'
+        self.token = ''
         TelegramModule.__init__(self, '고래', self.token)
         self.updater.stop()
     

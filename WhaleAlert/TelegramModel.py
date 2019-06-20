@@ -9,11 +9,11 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 # https://antilibrary.org/2060
 # https://steemit.com/kr-dev/@maanya/30
 
-# 826228868:AAF-MKYqX-PZfn27URQZRnAM7a6fa0ljHuw
+# 
 # 826228868
 # u.message.chat_id : 65708965
 
-my_token = '826228868:AAF-MKYqX-PZfn27URQZRnAM7a6fa0ljHuw'
+my_token = ''
 
 class TelegramBot:
     def __init__(self, name, token):
@@ -38,7 +38,7 @@ class TelegramBot:
 
 class BotWhale(TelegramBot):
     def __init__(self):
-        self.token = '826228868:AAF-MKYqX-PZfn27URQZRnAM7a6fa0ljHuw'
+        self.token = ''
         TelegramBot.__init__(self, '고래', self.token)
         self.updater.stop()
 
