@@ -1,5 +1,6 @@
 import MessageApi
 import TelegramApi
+import telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 # import Setting
 # config = Setting.Config("bot.ini", debug=True)
@@ -50,16 +51,20 @@ def apiCallCommandHandler(bot, update):
 def receivedMessageHandler(bot, update):
     update.message.reply_text(update.message.text + '|' + msgBot.getNow())
 
-teleBot = TelegramApi.TelegramModule('WhaleAlert', msgBot.token)
+# bot = telegram.Bot(msgBot.token)
+updater = Updater(msgBot.token)
+
+# teleBot = TelegramApi.TelegramModule('WhaleAlert', bot, updater)
 
 # 핸들러들
 # help
-teleBot.updater.dispatcher.add_handler(CommandHandler('h', helpCommandHandler))
+updater.dispatcher.add_handler(CommandHandler('h', helpCommandHandler))
 # start
-teleBot.updater.dispatcher.add_handler(CommandHandler('s', startCommandHandler))
+updater.dispatcher.add_handler(CommandHandler('s', startCommandHandler))
 # WhaleAlert
-teleBot.updater.dispatcher.add_handler(CommandHandler('w', apiCallCommandHandler))
+updater.dispatcher.add_handler(CommandHandler('w', apiCallCommandHandler))
 # 답변
-teleBot.updater.dispatcher.add_handler(MessageHandler(Filters.text, receivedMessageHandler))
+updater.dispatcher.add_handler(MessageHandler(Filters.text, receivedMessageHandler))
 
-teleBot.start()
+updater.start_polling()
+updater.idle()

@@ -5,6 +5,9 @@ import local
 config = local.Config("bot.ini", debug=True)
 my_token = config.telegram.key
 
+import MessageApi
+msgBot = MessageApi.MessageModule(config.mongodb.connString, config.telegram.key, config.whalealert.key)
+
 # real path to dirname
 dir_now = os.path.dirname(os.path.abspath(__file__))
 
@@ -34,6 +37,19 @@ def get_file(bot, update) :
     bot.getFile(file_id_short).download(file_url)
     update.message.reply_text('file saved')
 
+# apiCall
+def apiCallCommandHandler(bot, update):
+    newArticle = []
+    newArticle = msgBot.apiCheck()
+
+    if len(newArticle) > 0:
+        for item in newArticle:
+            msg = '[' + str(item['blockchain']) + ']' + str(item['amount_usd']) + '(' + str(item['amount']) + ') : ' + str(item['timestamp'])
+            update.message.reply_text(msg)
+    else:
+        update.message.reply_text('없음.')
+
+
 updater = Updater(my_token)
 
 message_handler = MessageHandler(Filters.text, receivedMessage)
@@ -47,6 +63,9 @@ updater.dispatcher.add_handler(photo_handler)
 
 file_handler = MessageHandler(Filters.document, get_file)
 updater.dispatcher.add_handler(file_handler)
+
+# WhaleAlert
+updater.dispatcher.add_handler(CommandHandler('w', apiCallCommandHandler))
 
 updater.start_polling(timeout=3, clean=True)
 updater.idle()

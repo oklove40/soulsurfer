@@ -3,14 +3,14 @@ import telegram
 from telegram.ext import Updater, MessageHandler, CommandHandler, Filters
 
 class TelegramModule:
-    def __init__(self, name, token):
+    def __init__(self, name, telegram, Updater):
         self.name = name
         self.id = 65708965
-        # self.core = telegram.Bot(token)
-        self.updater = Updater(token)
+        self.core = telegram
+        self.updater = Updater
 
-    # def sendMsg(self, text):
-    #     self.core.sendMessage(chat_id=self.id, text=text)    
+    def sendMsg(self, text):
+        self.core.sendMessage(chat_id=self.id, text=text)    
 
     def receivedMessage(self, update):
         update.message.reply_text(update.message.text)
