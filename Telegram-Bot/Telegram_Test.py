@@ -1,7 +1,9 @@
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 import os
+import local
 
-my_token = ''
+config = local.Config("bot.ini", debug=True)
+my_token = config.telegram.key
 
 # real path to dirname
 dir_now = os.path.dirname(os.path.abspath(__file__))

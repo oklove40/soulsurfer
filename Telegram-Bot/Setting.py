@@ -29,7 +29,7 @@ class Config:
         self.config = configparser.ConfigParser()
         self.config.optionxform = lambda option: option    # prevent the key value being lowercase
         self.config.read(self.filename)
-        print("Load Config : %s" % self.filename)
+        # print("Load Config : %s" % self.filename)
 
         # set sections
         for section in self.config.sections():
