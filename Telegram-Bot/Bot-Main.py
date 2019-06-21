@@ -1,8 +1,14 @@
 import MessageApi
 import TelegramApi
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+import Setting
 
-msgBot = MessageApi.MessageModule()
+config = Setting.Config("bot.ini", debug=False)
+# print(config.mongodb.connString)
+# print(config.telegram.key)
+# print(config.whalealert.key)
+
+msgBot = MessageApi.MessageModule(config.telegram.key, config.whalealert.key)
 # msgBot.sendMsg('test')
 
 # 핸들러용 메소드들
@@ -17,7 +23,8 @@ def helpCommandHandler(bot, update) :
 
 # Start 메세지
 def startCommandHandler(bot, update) :
-    msg = "Hi. I'm Whale Alert Api Boot! \n i will send you updates on registration crytocurrency transation in one hour."
+    msg = "Hi. I'm Whale Alert Api Boot! "
+    msg += "\n i will send you updates on registration crytocurrency transation in one hour."
     msg += "\n send /s to activate bot"
     msg += "\n send /v to minimum value - upper 500000"
     msg += "\n send /h to help"

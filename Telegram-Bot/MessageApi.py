@@ -1,4 +1,5 @@
 # 메세지 관련 API 모음
+import configparser
 import pymongo
 import json
 import time
@@ -6,10 +7,10 @@ import json
 import requests
 
 class MessageModule:
-    def __init__(self):
-        self.token = ''
+    def __init__(self, token, api_key):
+        self.token = token.replace('"','')
         self.trades = []
-        self.api_key=''
+        self.api_key=api_key.replace('"','')
         self.min_value = '10000000'
         self.collection = []
         self.initialDB()
