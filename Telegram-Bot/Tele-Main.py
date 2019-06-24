@@ -50,7 +50,10 @@ def minimumCommandHandler(bot, update):
     show_list = []
     show_list.append(InlineKeyboardButton("5 m", callback_data="500000"))
     show_list.append(InlineKeyboardButton("10 m", callback_data="1000000"))
-    show_list.append(InlineKeyboardButton("20 m", callback_data="2000000"))
+    show_list.append(InlineKeyboardButton("50 m", callback_data="5000000"))
+    show_list.append(InlineKeyboardButton("100 m", callback_data="10000000"))
+    show_list.append(InlineKeyboardButton("500 m", callback_data="50000000"))
+    show_list.append(InlineKeyboardButton("1000 m", callback_data="100000000"))
     show_markup = InlineKeyboardMarkup(minimumValue(show_list, len(show_list) - 1))
 
     update.message.reply_text("원하는 값을 선택하세요.", reply_markup=show_markup)
@@ -68,7 +71,7 @@ def apiCallCommandHandler(bot, update):
 
     if len(newArticle) > 0:
         for item in newArticle:
-            msg = str(timestampToDatetime(item['timestamp'])) + '/n[' + str(item['blockchain']) + '] USD:' + str(format(item['amount_usd'], ",")) + ' (' + str(format(item['amount'], ",")) + ')'
+            msg = str(timestampToDatetime(item['timestamp'])) + '\n [' + str(item['blockchain']) + '] USD:' + str(format(item['amount_usd'], ",")) + ' (' + str(format(item['amount'], ",")) + ')'
             update.message.reply_text(msg)
     else:
         update.message.reply_text('없음.')
@@ -76,6 +79,28 @@ def apiCallCommandHandler(bot, update):
 # 답변
 def receivedMessageHandler(bot, update):
     update.message.reply_text(update.message.text + '|' + msgBot.getNow())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # 시작메세지
 import telegram
