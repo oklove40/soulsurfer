@@ -91,6 +91,16 @@ for feed in soup.select('item'):
 
         coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 2))
 
+    # 데일리 리포트
+    daily = feed.title.text.find('데일리 리포트')
+    if daily > 0:
+        # print(feed.title.text, feed.link.text, feed.pubDate.text)
+        cnt = feed.description.text.find('전문보기')
+        link = feed.description.text[cnt + 7:]
+        # print(link)
+
+        coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 5))
+
     # 암호화폐 자금 흐름
     valueTransaction = feed.title.text.find('실시간 암호화폐 자금 흐름')
     if valueTransaction > 0:
@@ -142,6 +152,8 @@ for item in coinnessList:
         bot.sendMessage(65708965, item.title + '\n' + item.description + '\n\n 원문보기 : ' + item.oriLink)
     elif item.type == 4:
         bot.sendMessage(65708965, item.title + '\n' + item.description + '\n\n 원문보기 : ' + item.oriLink)
+    elif item.type == 5:
+        bot.sendMessage(65708965, item.title + '\n' + item.description + '\n\n 원문보기 : ' + item.oriLink + '\n\n전문 보기:' + item.link)
 
 
 # updater = Updater(msgBot.token)
