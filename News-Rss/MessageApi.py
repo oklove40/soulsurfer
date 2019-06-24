@@ -26,10 +26,12 @@ class MessageModule:
         try:
             # DB connection
             conn = pymongo.MongoClient(self.connString)
-            db = conn.crypto
+            # crypto = conn.crypto
+            coinNess = conn.coinNess
             
             # 콜렉션 획득, 전역
-            self.collection = db.transation
+            # self.collection = crypto.transation
+            self.collection = coinNess.alarmList
         except Exception as identifier:
             pass
 

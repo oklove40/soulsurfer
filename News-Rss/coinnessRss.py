@@ -35,126 +35,219 @@ import requests
 from bs4 import BeautifulSoup
 import datefinder
 
+# 이미지 합치기
+# https://rednooby.tistory.com/101
+# pip install ipython[all]
+# pip install pillow
+# from IPython.display import Image
+# from PIL import Image as PILImage
+# import os
+
 class coinness:
-    def __init__(self, title, date, description, link, oriLink, html, type):
+    def __init__(self, title, keyDate, description, link, oriLink, html, type, imgs, imageName):
         self.title = title
         self.keyDate = keyDate
         self.description = description
         self.link = link
         self.oriLink = oriLink
         self.html = html
-        self.type = type    #   1:자금흐름보기, 2:시황 전문 보기, 3:실시간 암호화폐 자금 흐름, 4:이 시각 핫 코인
-
-rss = requests.get('https://kr.coinness.com/newsflash.rss')
-# print(rss.text)
+        self.type = type    #   1:자금흐름보기, 2:시황 전문 보기, 3:실시간 암호화폐 자금 흐름, 4:이 시각 핫 코인, 5:데일리 리포트, 6:저녁 시황, 7:저녁 뉴스 브리핑
+        self.imgs = imgs
+        self.imageName = imageName
 
 coinnessList = []
+imgs = []
 
-soup = BeautifulSoup(rss.text, 'lxml-xml')
+def main():
+    url = 'https://kr.coinness.com/newsflash.rss'
+    rss = requests.get(url)
+    soup = BeautifulSoup(rss.text, 'lxml-xml')
 
-for feed in soup.select('item'):
-    keyDate = list(datefinder.find_dates(feed.pubDate.text.replace('0800','8')))[0]
-    oriLink = feed.link.text
-
-    # 자금흐름보기
-    valueTransactionView = feed.description.text.find('자금흐름보기')
-    if valueTransactionView > 0:
+    for feed in soup.select('item'):
         # print(feed.title.text, feed.link.text, feed.pubDate.text)
+        keyDate = list(datefinder.find_dates(feed.pubDate.text.replace('0800','8')))[0]
+        oriLink = feed.link.text
 
-        link = feed.description.text[valueTransactionView + 8:]
-        # print(link)
-        # print(keyDate)
+        # 자금흐름보기
+        valueTransactionView = feed.description.text.find('자금흐름보기')
+        if valueTransactionView > 0:
+            link = feed.description.text[valueTransactionView + 8:]
 
-        # 페이지 크롤링
-        html = requests.get(link)
-        print(html)
+            # 페이지 크롤링
+            html = requests.get(link)
 
-        bs = BeautifulSoup(html.text, 'html.parser')
-        tags = bs.findAll('img', attrs={'alt': 'image.png'})
-        detailImg = ''
+            bs = BeautifulSoup(html.text, 'html.parser')
+            tags = bs.findAll('img', attrs={'alt': 'image.png'})
 
-        for tag in tags :
-            # 검색된 태그에서 a 태그에서 텍스트를 가져옴
-            # print(tag)
-            # detailImg = str(tag).replace('<','&lt;').replace('>','&gt;')
-            detailImg = tag['src']
-            break
+            imgs = []
+            for tag in tags :
+                imgs.append(tag['src'])
 
-        coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, detailImg, 1))
-        
-    # 시황
-    valueSituration = feed.description.text.find('시황 전문 보기')
-    if valueSituration > 0:
-        # print(feed.title.text, feed.link.text, feed.pubDate.text)
-        link = feed.description.text[valueSituration + 10:]
-        # print(link)
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 1, imgs, ''))
+            
+        # 시황
+        valueSituration = feed.description.text.find('시황 전문 보기')
+        if valueSituration > 0:
+            link = feed.description.text[valueSituration + 10:]
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 2, [], ''))
 
-        coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 2))
+        # 데일리 리포트
+        daily = feed.title.text.find('데일리 리포트')
+        if daily > 0:
+            cnt = feed.description.text.find('전문보기')
+            link = feed.description.text[cnt + 7:]
 
-    # 데일리 리포트
-    daily = feed.title.text.find('데일리 리포트')
-    if daily > 0:
-        # print(feed.title.text, feed.link.text, feed.pubDate.text)
-        cnt = feed.description.text.find('전문보기')
-        link = feed.description.text[cnt + 7:]
-        # print(link)
+            # 페이지 크롤링
+            html = requests.get(link)
 
-        coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 5))
+            bs = BeautifulSoup(html.text, 'html.parser')
+            tags = bs.findAll('img', attrs={'alt': 'image.png'})
 
-    # 암호화폐 자금 흐름
-    valueTransaction = feed.title.text.find('실시간 암호화폐 자금 흐름')
-    if valueTransaction > 0:
-        # print(feed.title.text, feed.link.text, feed.pubDate.text)
-        # print(feed.description.text)
+            imgs = []
+            for tag in tags :
+                imgs.append(tag['src'])
+            
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 5, imgs, ''))
 
-        coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 3))
+        # 암호화폐 자금 흐름
+        valueTransaction = feed.title.text.find('실시간 암호화폐 자금 흐름')
+        if valueTransaction > 0:
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 3, [], ''))
 
-    # 이 시각 핫 코인
-    hotCoin = feed.title.text.find('이 시각 핫 코인')
-    if hotCoin > 0:
-        print(feed.title.text, feed.link.text, feed.pubDate.text)
-        # print(feed.description.text)
+        # 이 시각 핫 코인
+        hotCoin = feed.title.text.find('이 시각 핫 코인')
+        if hotCoin > 0:
+            # print(feed.title.text, feed.link.text, feed.pubDate.text)
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 4, [], ''))
 
-        coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 4))
+        # 저녁 시황
+        night = feed.title.text.find('저녁 시황')
+        if night > 0:
+            # print(feed.title.text, feed.link.text, feed.pubDate.text)
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 6, [], ''))
 
+        # 저녁 뉴스 브리핑
+        nightBriefing = feed.title.text.find('저녁 뉴스 브리핑')
+        if nightBriefing > 0:
+            # print(feed.title.text, feed.link.text, feed.pubDate.text)
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 7, [], ''))
 
-# print(root)
-# print(list(datefinder.find_dates(feed.pubDate.text.replace('0800','8')))[0])
-
-for item in coinnessList:
-    print(item)
+class coinnesstest:
+    def __init__(self, title, keyDate, description, link, oriLink, html, type, imgs, imageName):
+        self.title = title
+        self.keyDate = keyDate
+        self.description = description
+        self.link = link
+        self.oriLink = oriLink
+        self.html = html
+        self.type = type    #   1:자금흐름보기, 2:시황 전문 보기, 3:실시간 암호화폐 자금 흐름, 4:이 시각 핫 코인, 5:데일리 리포트, 6:저녁 시황, 7:저녁 뉴스 브리핑
+        self.imgs = imgs
+        self.imageName = imageName
 
 # Telegram 알림
-import MessageApi
-# import telegram
-# from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+def sendTelegram():
+    import MessageApi
+    import Setting
+    import telegram
 
-import Setting
-config = Setting.Config("bot.ini", debug=True)
+    config = Setting.Config("bot.ini", debug=True)
+    msgBot = MessageApi.MessageModule(config.mongodb.connString, config.telegram.key, config.whalealert.key)
 
-msgBot = MessageApi.MessageModule(config.mongodb.connString, config.telegram.key, config.whalealert.key)
+    alertList = []
+    bot = telegram.Bot(msgBot.token)
+    for item in coinnessList:
+        cnt = len(list(msgBot.collection.find({'keyDate':str(item.keyDate)})))
+        if cnt == 0:
+            if item.type == 2:
+                try:
+                    msgBot.collection.insert
+                    (
+                        {
+                            'title': item.title
+                            , 'keyDate': str(item.keyDate)
+                            , 'description': item.description
+                            , 'link': item.link
+                            , 'oriLink': item.oriLink
+                            , 'html': item.html
+                            , 'type': item.type
+                            , 'imgs': item.imgs
+                            , 'imageName': item.imageName
+                        }
+                    )
+                except Exception as identifier:
+                    pass
 
-# apiCall
+                alertList.append(item)
+                bot.sendMessage(65708965, item.title + '\n\n' + item.description + '\n\n 원문보기 : ' + item.oriLink + '\n\n시황 전문 보기:' + item.link)
+            elif item.type == 3 or item.type == 4 or item.type == 6 or item.type == 7:
+                # msgBot.coinNessCollection.insertOne({item.title, str(item.keyDate), item.description, item.link, item.oriLink, item.html, item.type, item.imgs, item.imageName})
+                # msgBot.coinNessCollection.insertOne(Trans(str(item).replace("'","\"")))
+                # msgBot.coinNessCollection.insert(json.dumps(str(alert)))
+
+                try:
+                    msgBot.collection.insert
+                    (
+                        {
+                            'title': item.title
+                            , 'keyDate': str(item.keyDate)
+                            , 'description': item.description
+                            , 'link': item.link
+                            , 'oriLink': item.oriLink
+                            , 'html': item.html
+                            , 'type': item.type
+                            , 'imgs': item.imgs
+                            , 'imageName': item.imageName
+                        }
+                    )
+                except Exception as identifier:
+                    pass
+
+                alertList.append(item)
+                bot.sendMessage(65708965, item.title + '\n\n' + item.description + '\n\n 원문보기 : ' + item.oriLink)
+            elif item.type == 1 or item.type == 5:
+                # msgBot.collection.insertOne(list({item.title, str(item.keyDate), item.description, item.link, item.oriLink, item.html, item.type, item.imgs, item.imageName}))
+
+                try:
+                    msgBot.collection.insert
+                    (
+                        {
+                            'title': item.title
+                            , 'keyDate': str(item.keyDate)
+                            , 'description': item.description
+                            , 'link': item.link
+                            , 'oriLink': item.oriLink
+                            , 'html': item.html
+                            , 'type': item.type
+                            , 'imgs': item.imgs
+                            , 'imageName': item.imageName
+                        }
+                    )
+                except Exception as identifier:
+                    pass
+
+                alertList.append(item)
+                bot.sendMessage(65708965, item.title + '\n\n')
+                for img in item.imgs:
+                    bot.sendPhoto(65708965, img)
+    
+import json
+from json import JSONEncoder
+class jsonEncoder(JSONEncoder):
+    def default(self, o):
+        return o.__dict__
+
+if __name__ == "__main__":
+    main()
+
+    if len(coinnessList) > 0:
+        sendTelegram()
+
+
+# # apiCall
+# from telegram.ext import Updater, CommandHandler
+
 # def apiCallCommandHandler(bot, update):
 #     update.message.reply_text('없음.')
-
-import telegram
-bot = telegram.Bot(msgBot.token)
-for item in coinnessList:
-    # print(item)
-    if item.type == 1:
-        bot.sendMessage(65708965, item.title)
-        bot.sendMessage(65708965, item.html.replace("'",""), 'HTML')
-        # bot.sendMessage(65708965, '자금흐름보기:' + item.link)
-    elif item.type == 2:
-        bot.sendMessage(65708965, item.title + '\n' + item.description + '\n\n 원문보기 : ' + item.oriLink + '\n\n시황 전문 보기:' + item.link)
-    elif item.type == 3:
-        bot.sendMessage(65708965, item.title + '\n' + item.description + '\n\n 원문보기 : ' + item.oriLink)
-    elif item.type == 4:
-        bot.sendMessage(65708965, item.title + '\n' + item.description + '\n\n 원문보기 : ' + item.oriLink)
-    elif item.type == 5:
-        bot.sendMessage(65708965, item.title + '\n' + item.description + '\n\n 원문보기 : ' + item.oriLink + '\n\n전문 보기:' + item.link)
-
 
 # updater = Updater(msgBot.token)
 
