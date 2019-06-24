@@ -132,115 +132,76 @@ def main():
             # print(feed.title.text, feed.link.text, feed.pubDate.text)
             coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 7, [], ''))
 
-class coinnesstest:
-    def __init__(self, title, keyDate, description, link, oriLink, html, type, imgs, imageName):
-        self.title = title
-        self.keyDate = keyDate
-        self.description = description
-        self.link = link
-        self.oriLink = oriLink
-        self.html = html
-        self.type = type    #   1:자금흐름보기, 2:시황 전문 보기, 3:실시간 암호화폐 자금 흐름, 4:이 시각 핫 코인, 5:데일리 리포트, 6:저녁 시황, 7:저녁 뉴스 브리핑
-        self.imgs = imgs
-        self.imageName = imageName
+import MessageApi
+import Setting
+config = Setting.Config("bot.ini", debug=True)
+msgBot = MessageApi.MessageModule(config.mongodb.connString, config.telegram.key, config.whalealert.key)
+alertList = []
 
 # Telegram 알림
 def sendTelegram():
-    import MessageApi
-    import Setting
     import telegram
 
-    config = Setting.Config("bot.ini", debug=True)
-    msgBot = MessageApi.MessageModule(config.mongodb.connString, config.telegram.key, config.whalealert.key)
-
-    alertList = []
     bot = telegram.Bot(msgBot.token)
     for item in coinnessList:
         cnt = len(list(msgBot.collection.find({'keyDate':str(item.keyDate)})))
         if cnt == 0:
             if item.type == 2:
-                try:
-                    msgBot.collection.insert
-                    (
-                        {
-                            'title': item.title
-                            , 'keyDate': str(item.keyDate)
-                            , 'description': item.description
-                            , 'link': item.link
-                            , 'oriLink': item.oriLink
-                            , 'html': item.html
-                            , 'type': item.type
-                            , 'imgs': item.imgs
-                            , 'imageName': item.imageName
-                        }
-                    )
-                except Exception as identifier:
-                    pass
-
-                alertList.append(item)
+                alertList.append(
+                    {
+                        'title': item.title
+                        , 'keyDate': str(item.keyDate)
+                        , 'description': item.description
+                        , 'link': item.link
+                        , 'oriLink': item.oriLink
+                        , 'html': item.html
+                        , 'type': item.type
+                        , 'imgs': item.imgs
+                        , 'imageName': item.imageName
+                    }
+                )
                 bot.sendMessage(65708965, item.title + '\n\n' + item.description + '\n\n 원문보기 : ' + item.oriLink + '\n\n시황 전문 보기:' + item.link)
             elif item.type == 3 or item.type == 4 or item.type == 6 or item.type == 7:
-                # msgBot.coinNessCollection.insertOne({item.title, str(item.keyDate), item.description, item.link, item.oriLink, item.html, item.type, item.imgs, item.imageName})
-                # msgBot.coinNessCollection.insertOne(Trans(str(item).replace("'","\"")))
-                # msgBot.coinNessCollection.insert(json.dumps(str(alert)))
-
-                try:
-                    msgBot.collection.insert
-                    (
-                        {
-                            'title': item.title
-                            , 'keyDate': str(item.keyDate)
-                            , 'description': item.description
-                            , 'link': item.link
-                            , 'oriLink': item.oriLink
-                            , 'html': item.html
-                            , 'type': item.type
-                            , 'imgs': item.imgs
-                            , 'imageName': item.imageName
-                        }
-                    )
-                except Exception as identifier:
-                    pass
-
-                alertList.append(item)
+                alertList.append(
+                    {
+                        'title': item.title
+                        , 'keyDate': str(item.keyDate)
+                        , 'description': item.description
+                        , 'link': item.link
+                        , 'oriLink': item.oriLink
+                        , 'html': item.html
+                        , 'type': item.type
+                        , 'imgs': item.imgs
+                        , 'imageName': item.imageName
+                    }
+                )
                 bot.sendMessage(65708965, item.title + '\n\n' + item.description + '\n\n 원문보기 : ' + item.oriLink)
             elif item.type == 1 or item.type == 5:
-                # msgBot.collection.insertOne(list({item.title, str(item.keyDate), item.description, item.link, item.oriLink, item.html, item.type, item.imgs, item.imageName}))
-
-                try:
-                    msgBot.collection.insert
-                    (
-                        {
-                            'title': item.title
-                            , 'keyDate': str(item.keyDate)
-                            , 'description': item.description
-                            , 'link': item.link
-                            , 'oriLink': item.oriLink
-                            , 'html': item.html
-                            , 'type': item.type
-                            , 'imgs': item.imgs
-                            , 'imageName': item.imageName
-                        }
-                    )
-                except Exception as identifier:
-                    pass
-
-                alertList.append(item)
+                alertList.append(
+                    {
+                        'title': item.title
+                        , 'keyDate': str(item.keyDate)
+                        , 'description': item.description
+                        , 'link': item.link
+                        , 'oriLink': item.oriLink
+                        , 'html': item.html
+                        , 'type': item.type
+                        , 'imgs': item.imgs
+                        , 'imageName': item.imageName
+                    }
+                )
                 bot.sendMessage(65708965, item.title + '\n\n')
                 for img in item.imgs:
                     bot.sendPhoto(65708965, img)
     
-import json
-from json import JSONEncoder
-class jsonEncoder(JSONEncoder):
-    def default(self, o):
-        return o.__dict__
-
 if __name__ == "__main__":
     main()
 
     if len(coinnessList) > 0:
         sendTelegram()
+
+    if len(alertList) > 0:
+        msgBot.collection.insert(alertList)
 
 
 # # apiCall
