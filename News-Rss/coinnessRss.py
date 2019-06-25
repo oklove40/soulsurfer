@@ -141,10 +141,15 @@ def main():
         if morningBriefing > 0:
             coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 8, [], ''))
 
+        # 대량 이체
+        bigTrade = feed.title.text.find('대량 이체')
+        if bigTrade > 0:
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 10, [], ''))
+
 import MessageApi
 import Setting
-config = Setting.Config("bot.ini", debug=True)
-msgBot = MessageApi.MessageModule(config.mongodb.connString, config.telegram.key, config.whalealert.key)
+configValue = Setting.Config("bot.ini", debug=True)
+msgBot = MessageApi.MessageModule(configValue.mongodb.connString, configValue.telegram.key, configValue.whalealert.key)
 alertList = []
 
 # Telegram 알림
@@ -171,7 +176,7 @@ def sendTelegram():
                 )
                 # bot.sendMessage(65708965, item.title + '\n\n' + item.description + '\n\n시황 전문 보기:' + item.link)
                 bot.sendMessage(65708965, item.title + '\n\n' + item.description)
-            elif item.type == 3 or item.type == 4 or item.type == 6 or item.type == 7 or item.type == 8:
+            elif item.type == 3 or item.type == 4 or item.type == 6 or item.type == 7 or item.type == 8 or item.type == 10:
                 alertList.append(
                     {
                         'title': item.title
@@ -217,8 +222,8 @@ def interval():
         sendTelegram()
     if len(alertList) > 0:
         msgBot.collection.insert(alertList)
-        for item in alertList:
-            print(item.title)
+        # for item in alertList:
+        #     print(item.title)
 
 # 인터벌처리
 import threading
