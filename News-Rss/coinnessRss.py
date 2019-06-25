@@ -117,20 +117,29 @@ def main():
         # 이 시각 핫 코인
         hotCoin = feed.title.text.find('이 시각 핫 코인')
         if hotCoin > 0:
-            # print(feed.title.text, feed.link.text, feed.pubDate.text)
             coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 4, [], ''))
 
         # 저녁 시황
         night = feed.title.text.find('저녁 시황')
         if night > 0:
-            # print(feed.title.text, feed.link.text, feed.pubDate.text)
             coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 6, [], ''))
+
+        # 오전 시황
+        morning = feed.title.text.find('오전 시황')
+        if morning > 0:
+            cnt = feed.description.text.find('전문보기')
+            link = feed.description.text[cnt + 7:]
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 9, [], ''))
 
         # 저녁 뉴스 브리핑
         nightBriefing = feed.title.text.find('저녁 뉴스 브리핑')
         if nightBriefing > 0:
-            # print(feed.title.text, feed.link.text, feed.pubDate.text)
             coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 7, [], ''))
+
+        # 아침 뉴스 브리핑
+        morningBriefing = feed.title.text.find('아침 뉴스 브리핑')
+        if morningBriefing > 0:
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 8, [], ''))
 
 import MessageApi
 import Setting
@@ -146,7 +155,7 @@ def sendTelegram():
     for item in coinnessList:
         cnt = len(list(msgBot.collection.find({'keyDate':str(item.keyDate)})))
         if cnt == 0:
-            if item.type == 2:
+            if item.type == 2 or item.type == 9:
                 alertList.append(
                     {
                         'title': item.title
@@ -160,8 +169,9 @@ def sendTelegram():
                         , 'imageName': item.imageName
                     }
                 )
-                bot.sendMessage(65708965, item.title + '\n\n' + item.description + '\n\n 원문보기 : ' + item.oriLink + '\n\n시황 전문 보기:' + item.link)
-            elif item.type == 3 or item.type == 4 or item.type == 6 or item.type == 7:
+                # bot.sendMessage(65708965, item.title + '\n\n' + item.description + '\n\n시황 전문 보기:' + item.link)
+                bot.sendMessage(65708965, item.title + '\n\n' + item.description)
+            elif item.type == 3 or item.type == 4 or item.type == 6 or item.type == 7 or item.type == 8:
                 alertList.append(
                     {
                         'title': item.title
@@ -193,16 +203,37 @@ def sendTelegram():
                 bot.sendMessage(65708965, item.title + '\n\n')
                 for img in item.imgs:
                     bot.sendPhoto(65708965, img)
-    
-if __name__ == "__main__":
-    main()
 
+def getNow():
+    import datetime
+    now =datetime.datetime.now()
+    return now.strftime('%Y-%m-%d %H:%M:%S')
+
+def interval():
+    print(getNow())
+
+    main()
     if len(coinnessList) > 0:
         sendTelegram()
-
     if len(alertList) > 0:
         msgBot.collection.insert(alertList)
+        for item in alertList:
+            print(item.title)
 
+# 인터벌처리
+import threading
+
+def setInterval(func,time):
+    e = threading.Event()
+    while not e.wait(time):
+        func()
+
+if __name__ == "__main__":
+    print('start!')
+    setInterval(interval, 60)
+
+
+# interval()
 
 # # apiCall
 # from telegram.ext import Updater, CommandHandler

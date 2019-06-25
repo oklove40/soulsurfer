@@ -33,16 +33,16 @@ class Config:
 
         # set sections
         for section in self.config.sections():
-            if self.debug:
-                print("[%s]" % section)
+            # if self.debug:
+            #     print("[%s]" % section)
             if not hasattr(self, section):
                 setattr(self, section, Empty())
             current_section = getattr(self, section)
             # set values
             for option in self.config[section]:
                 value = self.config.get(section, option)
-                if self.debug:
-                    print("%s = %s" % (option, value))
+                # if self.debug:
+                #     print("%s = %s" % (option, value))
                 setattr(current_section, option, getValue(value))
 
     def getValue(self, section, option):
@@ -63,7 +63,7 @@ class Config:
     def save(self):
         with open(self.filename, 'w') as configfile:
             self.config.write(configfile)
-            print("Saved Config : " + self.filename)
+            # print("Saved Config : " + self.filename)
 
     def getFilename(self):
         return self.filename
