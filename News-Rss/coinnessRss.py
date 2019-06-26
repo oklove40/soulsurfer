@@ -115,7 +115,12 @@ def main():
             coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 3, [], ''))
 
         # 이 시각 핫 코인
-        hotCoin = feed.title.text.find('이 시각 핫 코인')
+        nowHotCoin = feed.title.text.find('이 시각 핫 코인')
+        if nowHotCoin > 0:
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 4, [], ''))
+
+        # 이 시각 핫코인
+        hotCoin = feed.title.text.find('핫코인')
         if hotCoin > 0:
             coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 4, [], ''))
 
@@ -148,9 +153,11 @@ def main():
 
 import MessageApi
 import Setting
-configValue = Setting.Config("bot.ini", debug=True)
-msgBot = MessageApi.MessageModule(configValue.mongodb.connString, configValue.telegram.key, configValue.whalealert.key)
+_configValue = Setting.Config("bot.ini", debug=True)
+msgBot = MessageApi.MessageModule(_configValue.mongodb.connString, _configValue.telegram.key, _configValue.whalealert.key)
 alertList = []
+
+import datetime
 
 # Telegram 알림
 def sendTelegram():
@@ -163,7 +170,8 @@ def sendTelegram():
             if item.type == 2 or item.type == 9:
                 alertList.append(
                     {
-                        'title': item.title
+                        '_id' : TimestampMillisec64(item.type)
+                        , 'title': item.title
                         , 'keyDate': str(item.keyDate)
                         , 'description': item.description
                         , 'link': item.link
@@ -174,12 +182,12 @@ def sendTelegram():
                         , 'imageName': item.imageName
                     }
                 )
-                # bot.sendMessage(65708965, item.title + '\n\n' + item.description + '\n\n시황 전문 보기:' + item.link)
                 bot.sendMessage(65708965, item.title + '\n\n' + item.description)
             elif item.type == 3 or item.type == 4 or item.type == 6 or item.type == 7 or item.type == 8 or item.type == 10:
                 alertList.append(
                     {
-                        'title': item.title
+                        '_id' : TimestampMillisec64(item.type)
+                        , 'title': item.title
                         , 'keyDate': str(item.keyDate)
                         , 'description': item.description
                         , 'link': item.link
@@ -194,7 +202,8 @@ def sendTelegram():
             elif item.type == 1 or item.type == 5:
                 alertList.append(
                     {
-                        'title': item.title
+                        '_id' : TimestampMillisec64(item.type)
+                        , 'title': item.title
                         , 'keyDate': str(item.keyDate)
                         , 'description': item.description
                         , 'link': item.link
@@ -210,9 +219,12 @@ def sendTelegram():
                     bot.sendPhoto(65708965, img)
 
 def getNow():
-    import datetime
     now =datetime.datetime.now()
     return now.strftime('%Y-%m-%d %H:%M:%S')
+
+def TimestampMillisec64(type):
+    mil = int((datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).total_seconds() * 1000) + type
+    return mil
 
 def interval():
     print(getNow())
@@ -225,6 +237,9 @@ def interval():
         # for item in alertList:
         #     print(item.title)
 
+    # 초기화
+    alertList.clear()
+
 # 인터벌처리
 import threading
 
@@ -235,8 +250,28 @@ def setInterval(func,time):
 
 if __name__ == "__main__":
     print('start!')
-    setInterval(interval, 60)
+    interval()
 
+    setInterval(interval, 300)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# print(getNow())
+# print(TimestampMillisec64(0))
 
 # interval()
 
