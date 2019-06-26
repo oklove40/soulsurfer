@@ -115,7 +115,12 @@ def main():
             coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 3, [], ''))
 
         # 이 시각 핫 코인
-        hotCoin = feed.title.text.find('이 시각 핫 코인')
+        nowHotCoin = feed.title.text.find('이 시각 핫 코인')
+        if nowHotCoin > 0:
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 4, [], ''))
+
+        # 이 시각 핫코인
+        hotCoin = feed.title.text.find('핫코인')
         if hotCoin > 0:
             coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 4, [], ''))
 
