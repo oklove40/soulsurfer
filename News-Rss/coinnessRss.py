@@ -245,8 +245,9 @@ def setInterval(func,time):
 
 if __name__ == "__main__":
     print('start!')
-    # setInterval(interval, 60)
     interval()
+
+    setInterval(interval, 300)
 
 
 
