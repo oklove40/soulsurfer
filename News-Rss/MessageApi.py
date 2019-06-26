@@ -32,7 +32,7 @@ class MessageModule:
             # 콜렉션 획득, 전역
             # self.collection = crypto.transation
             self.collection = coinNess.alarmList
-        except Exception as identifier:
+        except Exception:
             pass
 
     def getNow(self):

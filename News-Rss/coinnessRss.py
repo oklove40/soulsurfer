@@ -148,8 +148,8 @@ def main():
 
 import MessageApi
 import Setting
-configValue = Setting.Config("bot.ini", debug=True)
-msgBot = MessageApi.MessageModule(configValue.mongodb.connString, configValue.telegram.key, configValue.whalealert.key)
+_configValue = Setting.Config("bot.ini", debug=True)
+msgBot = MessageApi.MessageModule(_configValue.mongodb.connString, _configValue.telegram.key, _configValue.whalealert.key)
 alertList = []
 
 import datetime
