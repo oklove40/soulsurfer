@@ -90,6 +90,13 @@ def main():
         if valueSituration > 0:
             link = feed.description.text[valueSituration + 10:]
             coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 2, [], ''))
+            
+        # 주간 리서치
+        weekendResearch = feed.description.text.find('주간 리서치')
+        if weekendResearch > 0:
+            cnt = feed.description.text.find('전문보기')
+            link = feed.description.text[cnt + 6:]
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 11, [], ''))
 
         # 데일리 리포트
         daily = feed.title.text.find('데일리 리포트')
@@ -167,7 +174,7 @@ def sendTelegram():
     for item in coinnessList:
         cnt = len(list(msgBot.collection.find({'keyDate':str(item.keyDate)})))
         if cnt == 0:
-            if item.type == 2 or item.type == 9:
+            if item.type == 2 or item.type == 9 or item.type == 11:
                 alertList.append(
                     {
                         '_id' : TimestampMillisec64(item.type)
