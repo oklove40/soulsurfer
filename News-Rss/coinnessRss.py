@@ -198,7 +198,13 @@ def sendTelegram():
                         , 'imageName': item.imageName
                     }
                 )
-                bot.sendMessage(65708965, item.title + '\n\n' + item.description + '\n\n 원문보기 : ' + item.oriLink)
+                msg = ''
+                if len(item.description) > 1000:
+                    msg = item.description[:1000] + '...'
+                else:
+                    msg = item.description
+
+                bot.sendMessage(65708965, item.title + '\n\n' + msg + '\n\n 원문보기 : ' + item.oriLink)
             elif item.type == 1 or item.type == 5:
                 alertList.append(
                     {
