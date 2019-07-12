@@ -81,7 +81,7 @@ def main():
 
             imgs = []
             for tag in tags :
-                imgs.append(tag['src'])
+                imgs.append(tag['data-src'])
 
             coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 1, imgs, ''))
             
@@ -112,7 +112,7 @@ def main():
 
             imgs = []
             for tag in tags :
-                imgs.append(tag['src'])
+                imgs.append(tag['data-src'])
             
             coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 5, imgs, ''))
 
@@ -229,7 +229,8 @@ def sendTelegram():
                 )
                 bot.sendMessage(65708965, item.title + '\n\n')
                 for img in item.imgs:
-                    bot.sendPhoto(65708965, img)
+                    # bot.sendPhoto(65708965, img)
+                    bot.sendMessage(65708965, img)
 
 def getNow():
     now =datetime.datetime.now()
