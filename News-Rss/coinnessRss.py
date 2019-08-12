@@ -102,7 +102,7 @@ def main():
         daily = feed.title.text.find('데일리 리포트')
         if daily > 0:
             cnt = feed.description.text.find('전문보기')
-            link = feed.description.text[cnt + 7:]
+            link = feed.description.text[cnt + 6:]
 
             # 페이지 크롤링
             html = requests.get(link)
