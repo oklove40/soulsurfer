@@ -74,7 +74,7 @@ def main():
             link = feed.description.text[valueTransactionView + 8:]
 
             # 페이지 크롤링
-            html = requests.get(link)
+            html = requests.get(httpCheck(link))
 
             bs = BeautifulSoup(html.text, 'html.parser')
             tags = bs.findAll('img', attrs={'alt': 'image.png'})
@@ -83,20 +83,20 @@ def main():
             for tag in tags :
                 imgs.append(tag['data-src'])
 
-            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 1, imgs, ''))
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, httpCheck(link), oriLink, '', 1, imgs, ''))
             
         # 시황
         valueSituration = feed.description.text.find('시황 전문 보기')
         if valueSituration > 0:
             link = feed.description.text[valueSituration + 10:]
-            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 2, [], ''))
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, httpCheck(link), oriLink, '', 2, [], ''))
             
         # 주간 리서치
         weekendResearch = feed.description.text.find('주간 리서치')
         if weekendResearch > 0:
             cnt = feed.description.text.find('전문보기')
             link = feed.description.text[cnt + 6:]
-            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 11, [], ''))
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, httpCheck(link), oriLink, '', 11, [], ''))
 
         # 데일리 리포트
         daily = feed.title.text.find('데일리 리포트')
@@ -105,7 +105,7 @@ def main():
             link = feed.description.text[cnt + 6:]
 
             # 페이지 크롤링
-            html = requests.get(link)
+            html = requests.get(httpCheck(link))
 
             bs = BeautifulSoup(html.text, 'html.parser')
             tags = bs.findAll('img', attrs={'alt': 'image.png'})
@@ -114,7 +114,7 @@ def main():
             for tag in tags :
                 imgs.append(tag['data-src'])
             
-            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 5, imgs, ''))
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, httpCheck(link), oriLink, '', 5, imgs, ''))
 
         # 암호화폐 자금 흐름
         valueTransaction = feed.title.text.find('실시간 암호화폐 자금 흐름')
@@ -141,7 +141,7 @@ def main():
         if morning > 0:
             cnt = feed.description.text.find('전문보기')
             link = feed.description.text[cnt + 7:]
-            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, link, oriLink, '', 9, [], ''))
+            coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, httpCheck(link), oriLink, '', 9, [], ''))
 
         # 저녁 뉴스 브리핑
         nightBriefing = feed.title.text.find('저녁 뉴스 브리핑')
@@ -157,6 +157,12 @@ def main():
         bigTrade = feed.title.text.find('대량 이체')
         if bigTrade > 0:
             coinnessList.append(coinness(feed.title.text, keyDate, feed.description.text, '', oriLink, '', 10, [], ''))
+
+#   http링크가 소스단에 공백등의 이유로 첫글자가 잘려 나올때가 있음.
+def httpCheck(link):
+    if link[0:3] == 'ttp':
+        link = 'h' + link
+    return link
 
 import MessageApi
 import Setting
